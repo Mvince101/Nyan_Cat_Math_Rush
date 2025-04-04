@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results - MathRush</title>
+    <link href="/dist/output.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('/dist/img/bg2.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex flex-col items-center justify-center text-center p-4 sm:p-6">
+
+    <!-- Result Container -->
+    <div class="bg-[#001F3F] p-6 sm:p-10 rounded-2xl shadow-2xl w-full max-w-lg fade-in border-gray-300">
+        <h1 class="text-2xl sm:text-3xl font-bold">Result</h1>
+
+        <!-- Player Name -->
+        <div class="mt-2 py-2 px-4 bg-gray-800 rounded-md text-lg font-semibold">
+            <span id="player-name">Player</span>
+        </div>
+
+        <!-- Score -->
+        <div class="mt-4 text-5xl sm:text-6xl font-extrabold text-white">
+            <span id="final-score">9/10</span>
+        </div>
+
+        <!-- Accuracy Bar -->
+        <div class="mt-4">
+            <p class="text-white text-lg font-medium">Accuracy</p>
+            <div class="w-full bg-gray-300 h-4 rounded-full mt-2 relative">
+                <div id="accuracy-bar" class="bg-green-500 h-4 rounded-full" style="width: 90%;"></div>
+                <span id="accuracy-text" class="absolute right-2 top-[-2px] text-black text-sm font-bold">90%</span>
+            </div>
+        </div>
+
+        <!-- Performance Feedback -->
+        <p id="performance-message" class="text-lg font-semibold mt-2 text-green-400">Good</p>
+
+        <!-- Score Breakdown -->
+        <div class="mt-4 grid grid-cols-3 gap-2 text-white">
+            <div class="bg-gray-800 p-3 rounded-lg">
+                <p class="text-xl font-bold" id="correct-answers">9</p>
+                <p class="text-sm">Correct</p>
+            </div>
+            <div class="bg-gray-800 p-3 rounded-lg">
+                <p class="text-xl font-bold" id="incorrect-answers">1</p>
+                <p class="text-sm">Incorrect</p>
+            </div>
+            <div class="bg-gray-800 p-3 rounded-lg">
+                <p class="text-xl font-bold" id="streak">5</p>
+                <p class="text-sm">Streak</p>
+            </div>
+        </div>
+
+        
+       
+        <!-- Buttons -->
+        <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+            <button id="retake-btn" 
+                class="w-full sm:w-40 px-6 py-3 bg-blue-600 hover:bg-blue-800 transition-all duration-300 text-white text-lg font-semibold rounded-lg shadow-md text-center">
+                Retake Quiz
+            </button>
+            <button id="exit-btn" 
+                class="w-full sm:w-40 px-6 py-3 bg-red-600 hover:bg-red-800 transition-all duration-300 text-white text-lg font-semibold rounded-lg shadow-md text-center">
+                Exit
+            </button>
+        </div>
+
+
+        <!-- Breakdown Section -->
+<div class="mt-6 text-left">
+    <h2 class="text-xl font-bold mb-2 text-white">Breakdown</h2>
+    <div id="breakdown-container" class="space-y-4">
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 1</p>
+            <p class="mt-1">Sarah has 58 apples and buys 24 more at the market. How many apples does Sarah have now?</p>
+            <p class="mt-2 text-green-400">Correct Answer: B) 82</p>
+            <p class="text-red-400">Your Answer: B) 82</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 2</p>
+            <p class="mt-1">A farmer harvested 125 tomatoes from one plot and 89 tomatoes from another plot. How many tomatoes did he harvest in total?</p>
+            <p class="mt-2 text-green-400">Correct Answer: B) 214</p>
+            <p class="text-red-400">Your Answer: B) 214</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 3</p>
+            <p class="mt-1">If a baker bakes 13 dozen cookies and sells 5 dozen, how many cookies does he still have left?</p>
+            <p class="mt-2 text-green-400">Correct Answer: B) 96</p>
+            <p class="text-red-400">Your Answer: B) 96</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 4</p>
+            <p class="mt-1">Lisa scored 85 out of 100 on her math test. What percentage did she earn on her test?</p>
+            <p class="mt-2 text-green-400">Correct Answer: B) 85%</p>
+            <p class="text-red-400">Your Answer: B) 85%</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 5</p>
+            <p class="mt-1">If a train travels 60 miles in one hour, how far will it travel in 3 hours at the same speed?</p>
+            <p class="mt-2 text-green-400">Correct Answer: C) 180 miles</p>
+            <p class="text-red-400">Your Answer: C) 180 miles</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 6</p>
+            <p class="mt-1">If you have 12 chocolates and you share them equally with 3 friends, how many chocolates does each person get?</p>
+            <p class="mt-2 text-green-400">Correct Answer: B) 4</p>
+            <p class="text-red-400">Your Answer: B) 4</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 7</p>
+            <p class="mt-1">Lucy bought 5 notebooks, each costing $2.75. If she also paid $1.50 for a pencil, how much did she spend in total?</p>
+            <p class="mt-2 text-green-400">Correct Answer: C) $15.25</p>
+            <p class="text-red-400">Your Answer: C) $15.25</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 8</p>
+            <p class="mt-1">A car was initially priced at $25,000 but is now priced at $22,500. By what percentage has the price decreased?</p>
+            <p class="mt-2 text-green-400">Correct Answer: B) 10%</p>
+            <p class="text-red-400">Your Answer: D) 15%</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 9</p>
+            <p class="mt-1"> John was reading a book with 120 pages. He has read 37 pages. How many pages does he have left to read?</p>
+            <p class="mt-2 text-green-400">Correct Answer: A) 93</p>
+            <p class="text-red-400">Your Answer: A) 93</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg text-white">
+            <p class="text-sm font-semibold">Question 10</p>
+            <p class="mt-1">A recipe requires 4 cups of flour to make a cake. If you want to make 3 cakes, how many cups of flour will you need altogether?</p>
+            <p class="mt-2 text-green-400">Correct Answer: B) 12 cups</p>
+            <p class="text-red-400">Your Answer: B) 12 cups</p>
+        </div>
+
+    </div>
+</div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateResults(correct, incorrect, playerName = "Player") {
+                const totalQuestions = correct + incorrect;
+                const accuracy = Math.round((correct / totalQuestions) * 100);
+                
+                document.getElementById("player-name").textContent = playerName;
+                document.getElementById("final-score").textContent = `${correct}/${totalQuestions}`;
+                document.getElementById("accuracy-bar").style.width = accuracy + "%";
+                document.getElementById("accuracy-text").textContent = accuracy + "%";
+                document.getElementById("correct-answers").textContent = correct;
+                document.getElementById("incorrect-answers").textContent = incorrect;
+                document.getElementById("streak").textContent = Math.floor(correct / 2); // Example streak logic
+
+                 
+
+                let feedback = "Keep Practicing!";
+                let color = "text-red-400";
+
+                if (accuracy >= 90) {
+                    feedback = "🎉 Incredible! You're a Math Pro!";
+                    color = "text-green-400";
+                } else if (accuracy >= 70) {
+                    feedback = "🔥 Great Job! Keep it up!";
+                    color = "text-yellow-400";
+                } else if (accuracy >= 50) {
+                    feedback = "🙂 Not Bad! Try for a better score!";
+                    color = "text-blue-400";
+                }
+
+                document.getElementById("performance-message").textContent = feedback;
+                document.getElementById("performance-message").classList.add(color);
+            }
+
+            
+            // Example Data (Replace with localStorage or API values)
+            const correctAnswers = parseInt(localStorage.getItem("correctAnswers")) || 9;
+            const incorrectAnswers = parseInt(localStorage.getItem("incorrectAnswers")) || 1;
+            const playerName = localStorage.getItem("playerName") || "Player";
+
+            updateResults(correctAnswers, incorrectAnswers, playerName);
+        });
+    </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Ensure elements are loaded before binding events
+                document.getElementById("retake-btn").addEventListener("click", function() {
+                    console.log("Retake Quiz clicked"); // Debugging
+                    window.location.href = "game.html"; // Ensure this file exists
+                });
+
+                document.getElementById("exit-btn").addEventListener("click", function() {
+                    console.log("Exit clicked"); // Debugging
+                    alert("Thanks for playing! See you next time!");
+                    window.location.href = "index.html"; // Ensure this file exists
+                });
+            });
+        </script>
+
+</body>
+</html>

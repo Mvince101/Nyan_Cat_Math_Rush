@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathRush</title>
+    <link href="/dist/output.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css"/>
+
+    <style>
+        .hero {
+        background-image: url('/dist/img/bg3.gif');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+
+    /* Overlay with Blur Effect */
+    .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.1); /* Dark overlay */
+        backdrop-filter: blur(10px); /* Apply blur effect */
+        -webkit-backdrop-filter: blur(10px); /* Safari support */
+    }
+
+    /* Ensures content stays above the overlay */
+    .hero > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out;
+    }
+    </style>
+</head>
+<body class="text-white font-arial">
+
+
+     
+        <!-- Game Introduction Popup -->
+        <div id="game-intro" class="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50 hidden">
+            <div class="bg-white text-black p-8 rounded-2xl shadow-lg max-w-lg w-full text-center animate-fadeIn">
+                <h2 class="text-4xl font-extrabold text-gray-900">Welcome to MathRush!</h2>
+                <p class="text-lg mt-4 text-gray-700 leading-relaxed">
+                    Get ready to test your math skills at lightning speed!
+                    Solve problems before time runs out, earn points, and challenge yourself! 
+                </p>
+                <button id="close-intro" class="mt-6 px-6 py-3 bg-blue-800 hover:bg-blue-700 transition-all duration-300 text-white text-lg font-semibold rounded-xl shadow-lg">
+                    Continue
+                </button>
+            </div>
+        </div>
+
+
+
+
+
+       <!-- Username Input Popup -->
+<div id="username-modal" class="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50 hidden">
+    <div class="bg-white text-black p-9 rounded-2xl shadow-lg max-w-lg w-full text-center animate-fadeIn">
+        <p class="text-lg mt-4 text-gray-700">Please enter your name to start playing.</p>
+        <input type="text" id="username-input" autocomplete="off" class="mt-4 p-3 w-1/2 mx-auto border border-gray-300 rounded-lg text-left text-lg focus:outline-none focus:ring-2 focus:ring-blue-900">
+        <button id="submit-username" class="mt-6 px-6 py-3 w-1/2 mx-auto bg-blue-800 hover:bg-blue-700 transition-all duration-300 text-white text-lg font-semibold rounded-xl shadow-lg">
+           Enter
+        </button>
+    </div>
+</div>
+
+
+
+        <!-- Display Username (Top-Right) -->
+<div id="display-username" 
+    class="fixed top-2 sm:top-3 right-2 sm:right-3 bg-gray-700 bg-opacity-90 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 z-50 border border-gray-500 max-w-[90%] sm:max-w-xs opacity-0 hover:opacity-100 hover:visible">
+    
+    <img src="/dist/img/iconnyan.png" 
+        alt="Nyan Cat" 
+        class="w-5 h-5 sm:w-7 sm:h-7 rounded-full border border-gray-400 shadow-sm"> 
+
+    <span id="username-text" class="text-white text-xs sm:text-sm tracking-wide truncate"></span>
+</div>
+
+
+        
+        
+
+
+    <!-- Music Controls -->
+    <button id="toggle-music" class="fixed top-2 left-2 p-2 text-white text-lg font-semibold rounded-xl shadow-lg w-10 h-10 flex items-center justify-center z-50 sm:z-20">
+        🔊
+    </button>
+
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
+        <source src="/dist/music/nyan-cat_1.mp3" type="audio/mp3">
+    </audio>
+
+    <section class="hero min-h-screen flex flex-col items-center justify-center text-center bg-black bg-opacity-100 backdrop-blur-md p-4">
+
+        
+
+        <!-- Nyan Cat Style Hero Section -->
+        <h1 class="text-5xl sm:text-9xl md:text-8xl lg:text-8xl font-extrabold text-white drop-shadow-2xl animate-bounce 
+        [text-shadow:_1px_1px_0px_black,_1px_1px_0px_black]">
+        MATHRUSH
+        </h1>
+
+        <p class="text-lg sm:text-2xl md:text-2xl mt-4 font-medium px-4">
+        Solve math problems at the speed of light!
+        </p>
+
+        <!-- Buttons Container -->
+<div class="flex flex-col items-center space-y-4 mt-6">
+    <!-- Start Game Button -->
+    <button onclick="startGame()" 
+        class="w-full sm:w-64 px-6 py-3 bg-blue-800 hover:bg-blue-700 transition-all duration-300 
+            text-white text-base sm:text-xl font-bold rounded-xl shadow-lg 
+            hover:scale-105 transform focus:outline-none">
+        Start Game
+    </button>
+
+    <!-- Rules Button -->
+    <button onclick="showModal()" 
+        class="w-full sm:w-64 px-6 py-3 bg-pink-800 hover:bg-pink-700 transition-all duration-300 
+            text-white text-base sm:text-xl font-bold rounded-xl shadow-lg 
+            hover:scale-105 transform focus:outline-none">
+        Rules
+    </button>
+
+    <!-- Modal -->
+<div id="rulesModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center opacity-0 pointer-events-none transition-opacity duration-500">
+    <div class="relative bg-cover bg-center p-10 rounded-3xl max-w-lg w-full shadow-xl transform scale-95 transition-all duration-500" style="background-image: url('/dist/img/bg1.jpg');">
+        
+        <!-- Close Button (X) -->
+        <button onclick="closeModal()" class="absolute top-5 right-5 text-white text-3xl font-bold focus:outline-none hover:text-red-600">
+            &times;
+        </button>
+
+        <h2 class="text-4xl font-extrabold text-white mb-2 text-center leading-tight">Game Rules</h2>
+        
+        <p class="text-lg text-white mb-8 leading-relaxed text-center font-medium">
+            Welcome to the game! <br>Here are the rules:
+        </p>
+        
+        <p class="text-base sm:text-lg md:text-xl mt-4 sm:mt-6 text-gray-100 leading-relaxed font-medium space-y-4">
+            <span class="block"><strong>Speed is key!</strong> Solve math problems before time runs out!</span>
+            <span class="block"><strong>Earn points</strong> for each correct answer!</span>
+            <span class="block"><strong>Wrong answers</strong> will deduct points!</span>
+            <span class="block"><strong>Answer fast</strong> for bonus points!</span>
+            <span class="block"><strong>Challenge yourself</strong> & become a MathRush champion!</span> <br><br>
+        </p>
+
+    </div>
+</div>
+
+</div>
+
+
+
+
+    </section>
+
+   
+
+
+
+    <!-- JavaScript for Game Intro Popup -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const gameIntro = document.getElementById("game-intro");
+            const usernameModal = document.getElementById("username-modal");
+            const closeIntroBtn = document.getElementById("close-intro");
+            const submitUsernameBtn = document.getElementById("submit-username");
+            const usernameInput = document.getElementById("username-input");
+            const displayUsername = document.getElementById("display-username");
+            const usernameText = document.getElementById("username-text");
+
+            // Show game intro first
+                gameIntro.classList.remove("hidden");
+
+            // Close welcome popup and show username input
+            closeIntroBtn.addEventListener("click", function () {
+                gameIntro.classList.add("hidden");
+                usernameModal.classList.remove("hidden");
+            });
+
+            // Save username and display it
+            submitUsernameBtn.addEventListener("click", function () {
+                const username = usernameInput.value.trim();
+                if (username !== "") {
+                    usernameText.textContent = username;
+                    displayUsername.classList.remove("hidden");
+                    usernameModal.classList.add("hidden");
+                } else {
+                    alert("Please enter your name.");
+                }
+            });
+        });
+    </script>
+
+
+
+    <!-- JavaScript for Music Controls and Smooth Scroll -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const bgMusic = document.getElementById("bg-music");
+            const toggleMusicBtn = document.getElementById("toggle-music");
+            const rulesBtn = document.getElementById("rules-btn");
+            const rulesSection = document.getElementById("rules-section");
+
+            // Automatically play the music when the page loads
+            bgMusic.volume = 0.1; 
+
+            bgMusic.play().catch(error => {
+                console.log("Autoplay failed. User interaction may be required.");
+            });
+
+            // Mute/Unmute toggle function
+            toggleMusicBtn.addEventListener("click", function () {
+                bgMusic.muted = !bgMusic.muted;
+                toggleMusicBtn.textContent = bgMusic.muted ? "🔇" : "🔊";
+            });
+
+            
+        });
+
+        function startGame() {
+            window.location.href = "game.html";
+        }
+
+        // Show modal with smooth transition
+    function showModal() {
+        const modal = document.getElementById('rulesModal');
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100', 'pointer-events-auto');
+    }
+
+    // Close modal with smooth transition
+    function closeModal() {
+        const modal = document.getElementById('rulesModal');
+        modal.classList.remove('opacity-100', 'pointer-events-auto');
+        modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+    </script>
+<script src="script.js"></script>
+</body>
+</html>

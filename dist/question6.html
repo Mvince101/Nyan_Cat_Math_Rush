@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathRush - Game</title>
+    <link href="/dist/output.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('/dist/img/bg2.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        #timer-bar {
+            height: 15px;
+            background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            transition: width 1s linear;
+        }
+        @keyframes moveNyan {
+            from {
+                left: 96%;
+            }
+            to {
+                left: 0%;
+            }
+        }
+
+        #nyan-cat {
+            position: absolute;
+            top: -20px; /* Adjust based on preference */
+            height: 40px; /* Adjust size */
+            animation: moveNyan 30s linear forwards; /* Moves from right to left */
+            transform: scaleX(-1);
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+    </style>
+</head>
+<body class="text-white min-h-screen flex flex-col items-center justify-center text-center">
+    
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
+        <source src="/dist/music/nyan-cat_1.mp3" type="audio/mp3">
+    </audio>
+    
+    <!-- Music Controls -->
+    <button id="toggle-music" class="fixed top-2 left-2 p-2 text-white text-lg font-semibold rounded-full w-10 h-10 flex items-center justify-center z-50 sm:z-20">
+        🔊
+    </button>
+    
+    
+    <!-- Quiz Container -->
+    <div id="quiz-container" 
+        class="hidden w-full max-w-3xl p-6 sm:p-8 md:p-10 bg-gray-800 rounded-xl shadow-2xl transition-all duration-300">
+
+        <div class="flex flex-row sm:flex-row justify-between items-center">
+            <p class="text-sm mt-4 sm:text-2xl font-extrabold">Question <span id="question-number">6</span>/10</p>
+            <p class="text-sm sm:text-2xl font-extrabold" id="timer">30s</p>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl md:text-4xl mt-4 sm:mt-6 font-bold text-center sm:text-center">
+            If you have 12 chocolates and you share them equally with 3 friends, how many chocolates does each person get?
+        </h2>
+
+        <!-- Answer Choices -->
+        <div class="grid grid-cols-2 gap-6 mt-10">
+            <button class="answer bg-pink-500 p-6 rounded-xl text-lg sm:text-xl md:text-2xl font-extrabold" data-value="3">A) 3</button>
+            <button class="answer bg-violet-700 p-6 rounded-xl text-lg sm:text-xl md:text-2xl font-extrabold" data-value="4">B) 4</button>
+            <button class="answer bg-sky-500 p-6 rounded-xl text-lg sm:text-xl md:text-2xl font-extrabold" data-value="5">C) 5</button>
+            <button class="answer bg-pink-300 p-6 rounded-xl text-lg sm:text-xl md:text-2xl font-extrabold" data-value="6">D) 6</button>
+        </div>
+        
+
+
+        <!-- Timer Bar -->
+        <div class="mt-6 sm:mt-8 w-full bg-gray-700 rounded-full h-3 sm:h-4 relative">
+            <div id="timer-bar" class="w-full h-3 sm:h-4 bg-green-400 rounded-full"></div>
+            <img src="/dist/img/OriginalNyan.webp" id="nyan-cat" class="h-6 sm:h-8">
+        </div>
+
+            
+     <!-- Correct Answer Modal -->
+     <div id="correct-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white p-6 sm:p-8 rounded-xl text-center shadow-2xl">
+            <img src="/dist/img/right.gif" alt="Correct Answer" class="w-48 sm:w-64 mx-auto">
+            <p class="text-2xl sm:text-3xl font-bold text-green-700 mt-4">Correct!</p>
+        </div>
+    </div>
+
+    <!-- Wrong Answer Modal -->
+    <div id="wrong-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white p-6 sm:p-8 rounded-xl text-center shadow-2xl">
+            <img src="/dist/img/wrong.gif" alt="Wrong Answer" class="w-48 sm:w-64 mx-auto">
+            <p class="text-2xl sm:text-3xl font-bold text-red-700 mt-4">Wrong!</p>
+        </div>
+    </div>
+
+    </div>
+
+    
+    <script>
+        let countdown = 3;
+        let timeLeft = 30;
+        const countdownElement = document.getElementById("countdown");
+        const countdownModal = document.getElementById("countdown-modal");
+        const countdownAudio = document.getElementById("countdown-audio");
+        const quizContainer = document.getElementById("quiz-container");
+        const timerElement = document.getElementById("timer");
+        const timerBar = document.getElementById("timer-bar");
+        const bgMusic = document.getElementById("bg-music");
+        const toggleMusicBtn = document.getElementById("toggle-music");
+        const answerButtons = document.querySelectorAll(".answer");
+        const correctSound = new Audio("/dist/music/correctAnswer.mp3");
+        const wrongSound = new Audio("/dist/music/wrongAnswer.mp3");
+
+        window.addEventListener("DOMContentLoaded", function () {
+        quizContainer.classList.remove("hidden");
+        quizContainer.classList.add("fade-in");
+
+        shuffleAnswers(); // Still shuffle answers
+        startTimer(); // Start quiz timer
+
+        // Start background music
+        setTimeout(() => {
+            bgMusic.volume = 0.1;
+            bgMusic.play().catch(error => {
+                console.log("Autoplay failed. User interaction may be required.");
+            });
+        }, 500);
+    });
+
+
+
+        // Start Timer
+        function startTimer() {
+            // Start the countdown
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = timeLeft + "s";
+                timerBar.style.width = (timeLeft / 30) * 100 + "%";
+
+                if (timeLeft === 0) {
+                    clearInterval(timerInterval);
+                    transitionToNextPage();
+                }
+            }, 1000);
+        }
+
+
+        // Smooth transition to the next page
+        function transitionToNextPage() {
+            document.body.classList.add("fade-out");
+            setTimeout(() => {
+                window.location.href = "question7.html";
+            }, 500);
+        }
+
+        // Delay background music start by 3 seconds
+        setTimeout(() => {
+            bgMusic.volume = 0.1;
+            bgMusic.play().catch(error => {
+                console.log("Autoplay failed. User interaction may be required.");
+            });
+        }, 3500);
+
+        // Mute/Unmute toggle function
+        toggleMusicBtn.addEventListener("click", function () {
+            bgMusic.muted = !bgMusic.muted;
+            toggleMusicBtn.textContent = bgMusic.muted ? "🔇" : "🔊";
+        });
+
+        // Answer Button Click Event
+        answerButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const selectedValue = this.getAttribute("data-value");
+
+                if (selectedValue === "4") { // Change "82" to the correct answer
+                    correctSound.currentTime = 0; // Reset sound to start
+                    correctSound.play(); // Play correct sound
+                    document.getElementById("correct-modal").classList.remove("hidden");
+
+                    setTimeout(() => {
+                        transitionToNextPage();
+                    }, 2000); // Show modal for 2 seconds, then move to next question
+                } else {
+                    wrongSound.currentTime = 0; // Reset sound to start
+                    wrongSound.play(); // Play wrong sound
+                    document.getElementById("wrong-modal").classList.remove("hidden");
+
+                    setTimeout(() => {
+                        transitionToNextPage();
+                    }, 2000); // Show modal for 2 seconds, then move to next question
+                }
+            });
+        });
+
+         
+
+        // Function to shuffle the answer choices
+        function shuffleAnswers() {
+            const answerButtons = Array.from(document.querySelectorAll(".answer"));
+            
+            // Shuffle the array of answer buttons
+            for (let i = answerButtons.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [answerButtons[i], answerButtons[j]] = [answerButtons[j], answerButtons[i]]; // Swap elements
+            }
+            
+            // Re-append shuffled buttons to the container
+            const answersContainer = document.querySelector(".grid"); // Assuming this is the container for answer buttons
+            answerButtons.forEach(button => answersContainer.appendChild(button)); // Reattach shuffled buttons
+            
+            // Update letter labels (A, B, C, D) after shuffling
+            answerButtons.forEach((button, index) => {
+                const letter = String.fromCharCode(65 + index); // Get letter (A, B, C, D)
+                button.innerHTML = `${letter}) ${button.innerHTML.split(') ')[1]}`; // Add the correct letter prefix
+            });
+        }
+
+        // Call the shuffleAnswers function when the page loads
+        window.addEventListener("DOMContentLoaded", function() {
+            shuffleAnswers();
+        });
+
+
+
+    </script>
+    
+</body>
+</html>
